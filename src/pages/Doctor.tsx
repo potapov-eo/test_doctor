@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
-import {NavLink, useParams} from 'react-router-dom'
-import {getWorklogs, WorklogDataType} from "../store/app-reducer";
+import {useParams} from 'react-router-dom'
+import {EmployeeType, getDoctors, getWorklogs, WorklogDataType} from "../store/app-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "../store/store";
 import {makeStyles} from '@material-ui/core/styles';
@@ -11,39 +11,46 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import {PATH} from "../routes/Routes";
-import {conversionDate} from "../utils/helperFunction";
+import {fulConversionDate} from "../utils/helperFunction";
 
 
 export const Doctor = () => {
     const dispatch = useDispatch()
     const {token} = useParams<{ token: string }>()
+    const doctors = useSelector<AppRootStateType, Array<EmployeeType>>(state => state.app.Employees)
+    const doctor: Array<EmployeeType> = doctors.filter((doc) => doc.id === +token)
     const WorkLogs = useSelector<AppRootStateType, Array<WorklogDataType>>(state => state.app.worklogData)
     const UserWorkLogs = WorkLogs.filter((log) => log.employee_id === +token)
     useEffect(() => {
         dispatch(getWorklogs())
+        if (doctors.length === 0) {    // for restart page
+            dispatch(getDoctors())
+        }
     }, [])
     console.log(token)
     console.log(UserWorkLogs)
-     const useStyles = makeStyles({
-         table: {
-             minWidth: 650,
-         },
-     });
+    const useStyles = makeStyles({
+        table: {
+            minWidth: 650,
+        },
+    });
 
-     function createData(id:number, enterTime: string, outTime: string) {
-         return {id, enterTime, outTime};
-     }
+    function createData(id: number, enterTime: string, outTime: string) {
+        return {id, enterTime, outTime};
+    }
 
-     const rows = UserWorkLogs.map((log) =>
-         createData(log.id, conversionDate(log.from ), conversionDate(log.to )))
+    const rows = UserWorkLogs.map((log) =>
+        createData(log.id, fulConversionDate(log.from), fulConversionDate(log.to)))
 
-     const classes = useStyles();
+    const classes = useStyles();
+
+
+
 
 
     return (
         <div className="App">
-
+            <div> {doctor[0] && `Doctor: ${doctor[0].lastName} ${doctor[0].firstName} ${doctor[0].middleName}`} </div>
             <TableContainer component={Paper} elevation={3}>
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
@@ -61,7 +68,7 @@ export const Doctor = () => {
                                     {row.id}
                                 </TableCell>
                                 <TableCell align="center">{row.enterTime}</TableCell>
-                                <TableCell align="center">{conversionDate(row.outTime)}</TableCell>
+                                <TableCell align="center">{(row.outTime)}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
