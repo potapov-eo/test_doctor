@@ -1,26 +1,26 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import {
+    BrowserRouter as Router
+} from "react-router-dom"
+import {Routes} from "./routes/Routes";
+import {useSelector} from "react-redux";
+import {RequestStatusType} from "./store/app-reducer";
+import {AppRootStateType} from "./store/store";
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const status = useSelector<AppRootStateType, RequestStatusType>(state => state.app.status)
+    return (<Router>
+            <div className="App">
+
+                {status === 'loading' && <LinearProgress/>}
+                <Routes/>
+
+            </div>
+        </Router>
+    );
 }
 
 export default App;
