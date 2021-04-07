@@ -21,14 +21,14 @@ export const Doctor = () => {
     const WorkLogs = useSelector(selectorWorkLogData)
     const UserWorkLogs = WorkLogs.filter((log) => log.employee_id === +token)
 
-    function createData(id: number, enterTime: string, outTime: string) {
+    function createTableData(id: number, enterTime: string, outTime: string) {
         return {id, enterTime, outTime};
     }
 
     const rows = UserWorkLogs.map((log) =>
-        createData(log.id, fulConversionDate(log.from), fulConversionDate(log.to)))
+        createTableData(log.id, fulConversionDate(log.from), fulConversionDate(log.to)))
 
-    const exitErrorIds = UserWorkLogs.reduce((acc: Array<number>, userLog) => {
+    const outErrorIds =  UserWorkLogs.reduce((acc: Array<number>, userLog) => {
         const employeesIn = WorkLogs.filter((log) => new Date(userLog.to) > new Date(log.from))
             .filter((log) => new Date(userLog.to) < new Date(log.to)).length
         if (employeesIn < 3) {
@@ -36,10 +36,6 @@ export const Doctor = () => {
         }
         return acc
     }, [])
-
-
-    console.log("render")
-
 
     return (
         <div className="App">
@@ -56,7 +52,7 @@ export const Doctor = () => {
                     </TableHead>
                     <TableBody>
                         {rows.map((row) => (
-                            <TableRow key={row.id} selected={exitErrorIds.includes(row.id)}>
+                            <TableRow key={row.id} selected={outErrorIds.includes(row.id)}>
 
                                 <TableCell align="center" scope="row">
                                     {row.id}

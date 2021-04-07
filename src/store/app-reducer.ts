@@ -18,8 +18,6 @@ export const appReducer = (state: AppInitialStateType = initialState, action: Ac
             return {...state, Employees: action.employees}
         case "APP/SET_WORKLOG":
             return {...state, workLogData: action.workLogData}
-
-
         default:
             return state
     }
