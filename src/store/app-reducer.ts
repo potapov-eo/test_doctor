@@ -1,18 +1,13 @@
 import {Dispatch} from "redux";
 import {getEmployees, getWorklog} from "../api";
 
-
-export type RequestStatusType = 'succeeded' | 'loading'
-
 const initialState: AppInitialStateType = {
     status: 'succeeded',
     error: null,
     Employees:[] as Array<EmployeeType>,
-    worklogData:[] as Array<WorklogDataType>
+    workLogData:[] as Array<WorkLogDataType>
 }
 
-
-// @ts-ignore
 export const appReducer = (state: AppInitialStateType = initialState, action: ActionsType): AppInitialStateType => {
     switch (action.type) {
         case 'APP/SET_STATUS':
@@ -22,7 +17,7 @@ export const appReducer = (state: AppInitialStateType = initialState, action: Ac
         case "APP/SET_EMPLOYEES":
             return {...state, Employees: action.employees}
         case "APP/SET_WORKLOG":
-            return {...state, worklogData: action.worklogData}
+            return {...state, workLogData: action.workLogData}
 
 
         default:
@@ -35,12 +30,12 @@ export const setAppStatus = (status: RequestStatusType) =>
 export const setAppError = (error: string | null) =>
     ({type: 'APP/SET_ERROR', error} as const)
 export const setEmployees = (employees: Array<EmployeeType>) => ({type: 'APP/SET_EMPLOYEES', employees} as const)
-export const setworklog = (worklogData: Array<WorklogDataType>) => ({type: 'APP/SET_WORKLOG', worklogData} as const)
+export const setWorkLog = (workLogData: Array<WorkLogDataType>) => ({type: 'APP/SET_WORKLOG', workLogData} as const)
 
 export const getDoctors = () => async (dispatch: Dispatch) => {
     try {
         dispatch(setAppStatus('loading'))
-       const  res = <Array<EmployeeType>> await getEmployees()
+       const  res  = await getEmployees() as Array<EmployeeType>
         dispatch(setAppStatus('succeeded'))
         dispatch(setEmployees(res))
 
@@ -49,12 +44,12 @@ export const getDoctors = () => async (dispatch: Dispatch) => {
         dispatch(setAppError("Error from response"))
     }
 }
-export const getWorklogs = () => async (dispatch: Dispatch) => {
+export const getWorkLogs = () => async (dispatch: Dispatch) => {
     try {
         dispatch(setAppStatus('loading'))
-        const  res = <Array<WorklogDataType>> await getWorklog()
+        const  res = await getWorklog() as Array<WorkLogDataType>
         dispatch(setAppStatus('succeeded'))
-        dispatch(setworklog(res))
+        dispatch(setWorkLog(res))
 
     } catch (e) {
         dispatch(setAppStatus('succeeded'))
@@ -62,12 +57,13 @@ export const getWorklogs = () => async (dispatch: Dispatch) => {
     }
 }
 
+export type RequestStatusType = 'succeeded' | 'loading'
 
-type AppInitialStateType = {
+export type AppInitialStateType = {
     status: RequestStatusType,
     error: null | string,
     Employees:Array<EmployeeType>,
-    worklogData: Array<WorklogDataType>
+    workLogData: Array<WorkLogDataType>
 }
 
 export type EmployeeType ={
@@ -78,7 +74,7 @@ export type EmployeeType ={
     birthDate: string,
     phone: string
 }
-export type WorklogDataType ={
+export type WorkLogDataType ={
     id: number
     employee_id: number,
     from: string,
@@ -89,7 +85,7 @@ type ActionsType =
     ReturnType<typeof setAppStatus> |
     ReturnType<typeof setAppError> |
     ReturnType<typeof setEmployees>|
-    ReturnType<typeof setworklog>
+    ReturnType<typeof setWorkLog>
 
 
 

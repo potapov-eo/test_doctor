@@ -1,9 +1,7 @@
 import React from 'react'
 import {useParams} from 'react-router-dom'
-import {EmployeeType, WorklogDataType} from "../store/app-reducer";
+import {EmployeeType} from "../store/app-reducer";
 import {useSelector} from "react-redux";
-import {AppRootStateType} from "../store/store";
-import {makeStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -12,22 +10,16 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import {fulConversionDate} from "../utils/helperFunction";
+import {selectorEmployees, selectorWorkLogData} from "../store/app-selector";
 
 
 export const Doctor = () => {
 
     const {token} = useParams<{ token: string }>()
-    const doctors = useSelector<AppRootStateType, Array<EmployeeType>>(state => state.app.Employees)
+    const doctors = useSelector(selectorEmployees)
     const doctor: Array<EmployeeType> = doctors.filter((doc) => doc.id === +token)
-    const WorkLogs = useSelector<AppRootStateType, Array<WorklogDataType>>(state => state.app.worklogData)
+    const WorkLogs = useSelector(selectorWorkLogData)
     const UserWorkLogs = WorkLogs.filter((log) => log.employee_id === +token)
-
-
-    const useStyles = makeStyles({
-        table: {
-            minWidth: 650,
-        },
-    });
 
     function createData(id: number, enterTime: string, outTime: string) {
         return {id, enterTime, outTime};
@@ -35,9 +27,6 @@ export const Doctor = () => {
 
     const rows = UserWorkLogs.map((log) =>
         createData(log.id, fulConversionDate(log.from), fulConversionDate(log.to)))
-
-    const classes = useStyles();
-
 
     const exitErrorIds = UserWorkLogs.reduce((acc: Array<number>, userLog) => {
         const employeesIn = WorkLogs.filter((log) => new Date(userLog.to) > new Date(log.from))
@@ -49,14 +38,14 @@ export const Doctor = () => {
     }, [])
 
 
-    console.log(exitErrorIds)
+    console.log("render")
 
 
     return (
         <div className="App">
             <div> {doctor[0] && `Doctor: ${doctor[0].lastName} ${doctor[0].firstName} ${doctor[0].middleName}`} </div>
             <TableContainer component={Paper} elevation={3}>
-                <Table className={classes.table} aria-label="simple table">
+                <Table aria-label="simple table">
                     <TableHead>
                         <TableRow>
                             <TableCell align="center">Log ID</TableCell>

@@ -1,30 +1,29 @@
 import React, {useEffect} from 'react';
 import './App.css';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import {
-    BrowserRouter as Router
-} from "react-router-dom"
+import {BrowserRouter as Router} from "react-router-dom"
 import {Routes} from "./routes/Routes";
 import {useDispatch, useSelector} from "react-redux";
-import {getDoctors, getWorklogs, RequestStatusType} from "./store/app-reducer";
-import {AppRootStateType} from "./store/store";
-import {ErrorSnackbar} from "./components/ErrorSnacBar";
+import {getDoctors, getWorkLogs} from "./store/app-reducer";
+import {ErrorSnackbar} from "./components/ErrorSnackBar";
+import {selectorError, selectorStatus} from "./store/app-selector";
 
 
 function App() {
     const dispatch = useDispatch()
-    const status = useSelector<AppRootStateType, RequestStatusType>(state => state.app.status)
-    const error = useSelector<AppRootStateType, null|string>(state => state.app.error)
+    const status = useSelector(selectorStatus)
+    const error = useSelector(selectorError)
+
     useEffect(() => {
-        dispatch(getWorklogs())
+        dispatch(getWorkLogs())
         dispatch(getDoctors())
-    }, [])
+    }, [dispatch])
+
     return (<Router>
             <div className="App">
                 {error !== null && <ErrorSnackbar/>}
                 {status === 'loading' && <LinearProgress/>}
                 <Routes/>
-
             </div>
         </Router>
     );

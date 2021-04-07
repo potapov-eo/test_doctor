@@ -1,7 +1,5 @@
-import React, {useState} from 'react'
-
+import React from 'react'
 import {Redirect, Route, Switch} from "react-router-dom";
-import {render} from "react-dom";
 import {Doctor} from "../pages/Doctor";
 import {Doctors} from "../pages/Doctors";
 
@@ -16,7 +14,7 @@ export const Routes = () => {
         <div>
             <Switch>
                 <Route path={"/"} exact render={() => <Redirect to={PATH.DOCTORS}/>}/>
-                <Route path={`${PATH.DOCTOR}/:token`}  render={() => <Doctor/>}/>
+                <Route path={`${PATH.DOCTOR}/:token`} render={() => <Doctor/>}/>
                 <Route path={PATH.DOCTOR} render={() => <Doctor/>}/>
                 <Route path={PATH.DOCTORS} render={() => <Doctors/>}/>
             </Switch>
