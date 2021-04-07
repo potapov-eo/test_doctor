@@ -322,11 +322,11 @@ const data = {
 };
 
 
-function delay(val:string) {
+function delay(val: string) {
     return new Promise((res, rej) => setTimeout(val ? res : rej, 500, val));
 }
 
-export function mockFetch(url:string) {
+export function mockFetch(url: string) {
 
     // @ts-ignore
     const payload = data[url];

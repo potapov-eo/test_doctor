@@ -9,7 +9,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import {fulConversionDate} from "../utils/helperFunction";
+import {fulConversionDate, getAutErrorIds} from "../utils/helperFunction";
 import {selectorEmployees, selectorWorkLogData} from "../store/app-selector";
 
 
@@ -17,9 +17,9 @@ export const Doctor = () => {
 
     const {token} = useParams<{ token: string }>()
     const doctors = useSelector(selectorEmployees)
-    const doctor: Array<EmployeeType> = doctors.filter((doc) => doc.id === +token)
+    const doctor: EmployeeType|undefined = doctors.find((doc) => doc.id === Number(token))
     const WorkLogs = useSelector(selectorWorkLogData)
-    const UserWorkLogs = WorkLogs.filter((log) => log.employee_id === +token)
+    const UserWorkLogs = WorkLogs.filter((log) => log.employee_id === Number(token))
 
     function createTableData(id: number, enterTime: string, outTime: string) {
         return {id, enterTime, outTime};
@@ -28,18 +28,11 @@ export const Doctor = () => {
     const rows = UserWorkLogs.map((log) =>
         createTableData(log.id, fulConversionDate(log.from), fulConversionDate(log.to)))
 
-    const outErrorIds =  UserWorkLogs.reduce((acc: Array<number>, userLog) => {
-        const employeesIn = WorkLogs.filter((log) => new Date(userLog.to) > new Date(log.from))
-            .filter((log) => new Date(userLog.to) < new Date(log.to)).length
-        if (employeesIn < 3) {
-            acc.push(userLog.id)
-        }
-        return acc
-    }, [])
+    const outErrorIds = React.useMemo(() => getAutErrorIds(UserWorkLogs, WorkLogs), [WorkLogs, UserWorkLogs])
 
     return (
         <div className="App">
-            <div> {doctor[0] && `Doctor: ${doctor[0].lastName} ${doctor[0].firstName} ${doctor[0].middleName}`} </div>
+            <div> {doctor && `Doctor: ${doctor.lastName} ${doctor.firstName} ${doctor.middleName}`} </div>
             <TableContainer component={Paper} elevation={3}>
                 <Table aria-label="simple table">
                     <TableHead>
@@ -58,7 +51,7 @@ export const Doctor = () => {
                                     {row.id}
                                 </TableCell>
                                 <TableCell align="center">{row.enterTime}</TableCell>
-                                <TableCell align="center">{(row.outTime)}</TableCell>
+                                <TableCell align="center">{row.outTime}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

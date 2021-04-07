@@ -4,8 +4,8 @@ import {getEmployees, getWorklog} from "../api";
 const initialState: AppInitialStateType = {
     status: 'succeeded',
     error: null,
-    Employees:[] as Array<EmployeeType>,
-    workLogData:[] as Array<WorkLogDataType>
+    Employees: [] as Array<EmployeeType>,
+    workLogData: [] as Array<WorkLogDataType>
 }
 
 export const appReducer = (state: AppInitialStateType = initialState, action: ActionsType): AppInitialStateType => {
@@ -33,7 +33,7 @@ export const setWorkLog = (workLogData: Array<WorkLogDataType>) => ({type: 'APP/
 export const getDoctors = () => async (dispatch: Dispatch) => {
     try {
         dispatch(setAppStatus('loading'))
-       const  res  = await getEmployees() as Array<EmployeeType>
+        const res = await getEmployees() as Array<EmployeeType>
         dispatch(setAppStatus('succeeded'))
         dispatch(setEmployees(res))
 
@@ -45,7 +45,7 @@ export const getDoctors = () => async (dispatch: Dispatch) => {
 export const getWorkLogs = () => async (dispatch: Dispatch) => {
     try {
         dispatch(setAppStatus('loading'))
-        const  res = await getWorklog() as Array<WorkLogDataType>
+        const res = await getWorklog() as Array<WorkLogDataType>
         dispatch(setAppStatus('succeeded'))
         dispatch(setWorkLog(res))
 
@@ -60,11 +60,11 @@ export type RequestStatusType = 'succeeded' | 'loading'
 export type AppInitialStateType = {
     status: RequestStatusType,
     error: null | string,
-    Employees:Array<EmployeeType>,
+    Employees: Array<EmployeeType>,
     workLogData: Array<WorkLogDataType>
 }
 
-export type EmployeeType ={
+export type EmployeeType = {
     id: number,
     firstName: string,
     lastName: string,
@@ -72,7 +72,7 @@ export type EmployeeType ={
     birthDate: string,
     phone: string
 }
-export type WorkLogDataType ={
+export type WorkLogDataType = {
     id: number
     employee_id: number,
     from: string,
@@ -82,7 +82,7 @@ export type WorkLogDataType ={
 type ActionsType =
     ReturnType<typeof setAppStatus> |
     ReturnType<typeof setAppError> |
-    ReturnType<typeof setEmployees>|
+    ReturnType<typeof setEmployees> |
     ReturnType<typeof setWorkLog>
 
 

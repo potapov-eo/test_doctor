@@ -23,7 +23,7 @@ export const Doctors = () => {
 
     const alphabetTableRows = doctors.sort((a, b) => a.lastName.localeCompare(b.lastName))
         .map((doc) => createTableData(doc.id, `${doc.lastName} ${doc.firstName} ${doc.middleName}`, conversionDate(doc.birthDate)))
-    console.log("render")
+
     return (
 
         <div className="App">
