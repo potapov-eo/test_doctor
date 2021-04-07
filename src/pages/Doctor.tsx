@@ -1,7 +1,7 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 import {useParams} from 'react-router-dom'
-import {EmployeeType, getDoctors, getWorklogs, WorklogDataType} from "../store/app-reducer";
-import {useDispatch, useSelector} from "react-redux";
+import {EmployeeType, WorklogDataType} from "../store/app-reducer";
+import {useSelector} from "react-redux";
 import {AppRootStateType} from "../store/store";
 import {makeStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -15,20 +15,14 @@ import {fulConversionDate} from "../utils/helperFunction";
 
 
 export const Doctor = () => {
-    const dispatch = useDispatch()
+
     const {token} = useParams<{ token: string }>()
     const doctors = useSelector<AppRootStateType, Array<EmployeeType>>(state => state.app.Employees)
     const doctor: Array<EmployeeType> = doctors.filter((doc) => doc.id === +token)
     const WorkLogs = useSelector<AppRootStateType, Array<WorklogDataType>>(state => state.app.worklogData)
     const UserWorkLogs = WorkLogs.filter((log) => log.employee_id === +token)
-    useEffect(() => {
-        dispatch(getWorklogs())
-        if (doctors.length === 0) {    // for restart page
-            dispatch(getDoctors())
-        }
-    }, [])
-    console.log(token)
-    console.log(UserWorkLogs)
+
+
     const useStyles = makeStyles({
         table: {
             minWidth: 650,
@@ -45,7 +39,17 @@ export const Doctor = () => {
     const classes = useStyles();
 
 
+    const exitErrorIds = UserWorkLogs.reduce((acc: Array<number>, userLog) => {
+        const employeesIn = WorkLogs.filter((log) => new Date(userLog.to) > new Date(log.from))
+            .filter((log) => new Date(userLog.to) < new Date(log.to)).length
+        if (employeesIn < 3) {
+            acc.push(userLog.id)
+        }
+        return acc
+    }, [])
 
+
+    console.log(exitErrorIds)
 
 
     return (
@@ -55,7 +59,7 @@ export const Doctor = () => {
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell align="center">ID</TableCell>
+                            <TableCell align="center">Log ID</TableCell>
                             <TableCell align="center">time from</TableCell>
                             <TableCell align="center">time to</TableCell>
 
@@ -63,7 +67,8 @@ export const Doctor = () => {
                     </TableHead>
                     <TableBody>
                         {rows.map((row) => (
-                            <TableRow key={row.id} selected={true}>
+                            <TableRow key={row.id} selected={exitErrorIds.includes(row.id)}>
+
                                 <TableCell align="center" scope="row">
                                     {row.id}
                                 </TableCell>

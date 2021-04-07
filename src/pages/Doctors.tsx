@@ -54,7 +54,7 @@ export const Doctors = () => {
                     </TableHead>
                     <TableBody>
                         {rows.map((row) => (
-                            <TableRow key={row.id} selected={true}>
+                            <TableRow key={row.id} >
                                 <TableCell align="center" scope="row">
                                     {row.id}
                                 </TableCell>
