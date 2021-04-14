@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import './App.css';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import {BrowserRouter as Router} from "react-router-dom"
+import {BrowserRouter as Router, HashRouter} from "react-router-dom"
 import {Routes} from "./routes/Routes";
 import {useDispatch, useSelector} from "react-redux";
 import {getDoctors, getWorkLogs} from "./store/app-reducer";
@@ -19,13 +19,13 @@ function App() {
         dispatch(getDoctors())
     }, [dispatch])
 
-    return (<Router>
+    return (<HashRouter>
             <div className="App">
                 {error !== null && <ErrorSnackbar/>}
                 {status === 'loading' && <LinearProgress/>}
                 <Routes/>
             </div>
-        </Router>
+        </HashRouter>
     );
 }
 
